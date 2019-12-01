@@ -215,7 +215,7 @@ pub(crate) mod tests {
         let comparison = parse_internal_line("Choice line", &().into()).unwrap();
 
         let mutex_lock = &*(&choice.selection_text).clone();
-        let selection_text = &*mutex_lock.lock().unwrap();
+        let selection_text = &*mutex_lock.try_lock().unwrap();
 
         assert_eq!(*selection_text, comparison);
         assert_eq!(choice.display_text, comparison);
@@ -225,7 +225,7 @@ pub(crate) mod tests {
     fn choices_can_be_parsed_with_alternatives_in_selection_text() {
         let choice = parse_choice_data("Hi! {One|Two}", &().into()).unwrap();
         let mutex_lock = &*(&choice.selection_text).clone();
-        let selection_text = &*mutex_lock.lock().unwrap();
+        let selection_text = &*mutex_lock.try_lock().unwrap();
         assert_eq!(
             *selection_text,
             parse_internal_line("Hi! {One|Two}", &().into()).unwrap(),
@@ -236,7 +236,7 @@ pub(crate) mod tests {
     fn braces_with_backslash_are_not_conditions() {
         let choice = parse_choice_data("\\{One|Two}", &().into()).unwrap();
         let mutex_lock = &*(&choice.selection_text).clone();
-        let selection_text = &*mutex_lock.lock().unwrap();
+        let selection_text = &*mutex_lock.try_lock().unwrap();
         assert_eq!(
             *selection_text,
             parse_internal_line("{One|Two}", &().into()).unwrap(),
@@ -247,7 +247,7 @@ pub(crate) mod tests {
     fn alternatives_can_be_within_brackets() {
         let choice = parse_choice_data("[{One|Two}]", &().into()).unwrap();
         let mutex_lock = &*(&choice.selection_text).clone();
-        let selection_text = &*mutex_lock.lock().unwrap();
+        let selection_text = &*mutex_lock.try_lock().unwrap();
         assert_eq!(
             *selection_text,
             parse_internal_line("{One|Two}", &().into()).unwrap(),
@@ -259,7 +259,7 @@ pub(crate) mod tests {
         let choice = parse_choice_data("Selection[] plus display", &().into()).unwrap();
 
         let mutex_lock = &*(&choice.selection_text).clone();
-        let selection_text = &*mutex_lock.lock().unwrap();
+        let selection_text = &*mutex_lock.try_lock().unwrap();
         assert_eq!(
             *selection_text,
             parse_internal_line("Selection", &().into()).unwrap()
@@ -272,7 +272,7 @@ pub(crate) mod tests {
         let choice = parse_choice_data("[Separate selection]And display", &().into()).unwrap();
 
         let mutex_lock = &*(&choice.selection_text).clone();
-        let selection_text = &*mutex_lock.lock().unwrap();
+        let selection_text = &*mutex_lock.try_lock().unwrap();
         assert_eq!(
             *selection_text,
             parse_internal_line("Separate selection", &().into()).unwrap()

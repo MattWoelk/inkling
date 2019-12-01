@@ -58,12 +58,15 @@ impl PartialEq for InternalChoice {
         let l = self.selection_text.clone();
         let r = rhs.selection_text.clone();
 
+        let lvalue = &*l.try_lock().unwrap();
+        let rvalue = &*r.try_lock().unwrap();
+
         self.display_text == rhs.display_text &&
             self.condition == rhs.condition &&
             self.is_sticky == rhs.is_sticky &&
             self.is_fallback == rhs.is_fallback &&
             self.meta_data == rhs.meta_data &&
-            *l.lock().unwrap() == *r.lock().unwrap()
+            *lvalue == *rvalue
     }
 }
 
@@ -78,7 +81,7 @@ impl ValidateContent for InternalChoice {
         let num_address_errors = error.invalid_address_errors.len();
 
         let mutex_lock = &*self.selection_text.clone();
-        let mut selection_text = mutex_lock.lock().unwrap();
+        let mut selection_text = mutex_lock.try_lock().unwrap();
 
         selection_text.validate(error, current_location, &self.meta_data, data);
 

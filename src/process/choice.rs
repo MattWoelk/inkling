@@ -100,7 +100,7 @@ fn process_choice_text_and_tags(
     //let mut line = Arc::try_unwrap(choice_line).unwrap().into_inner().unwrap();
 
     let mutex_lock = &*(&choice_line).clone();
-    let mut line = &mut *mutex_lock.lock().unwrap();
+    let mut line = &mut *mutex_lock.try_lock().unwrap();
 
     process_line(&mut line, &mut data_buffer, data).map_err(|err| InternalError::from(err))?;
 
