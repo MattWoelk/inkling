@@ -7,7 +7,7 @@ use crate::{
     story::validate::{ValidateContent, ValidationData},
 };
 
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, sync::Arc};
 
 #[cfg(feature = "serde_support")]
 use serde::{Deserialize, Serialize};
@@ -34,7 +34,7 @@ pub struct InternalChoice {
     /// Instead, we use a pointer with internal mutability and send that further up the stack.
     /// This means that any processing of choices further up will affect the data in the node,
     /// meaning that for example alternative sequences will be updated if the choice was seen.
-    pub selection_text: Rc<RefCell<InternalLine>>,
+    pub selection_text: Arc<RefCell<InternalLine>>,
     /// Text that will be added to the output line buffer if the choice is selected.
     ///
     /// This will be added to the buffer before the rest of the lines from the selected
@@ -130,7 +130,7 @@ impl InternalChoiceBuilder {
         let meta_data = self.display_text.meta_data.clone();
 
         InternalChoice {
-            selection_text: Rc::new(RefCell::new(self.selection_text)),
+            selection_text: Arc::new(RefCell::new(self.selection_text)),
             display_text: self.display_text,
             condition: self.condition,
             is_sticky: self.is_sticky,

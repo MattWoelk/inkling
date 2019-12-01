@@ -8,7 +8,7 @@ use crate::{
     story::Choice,
 };
 
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, sync::Arc};
 
 /// Prepare a list of choices to display to the user.
 ///
@@ -75,7 +75,7 @@ fn zip_choices_with_filter_values(
                 // text to update their state. Instead, we clone the data and process that.
 
                 let independent_text = choice_data.selection_text.borrow().clone();
-                process_choice_text_and_tags(Rc::new(RefCell::new(independent_text)), data)
+                process_choice_text_and_tags(Arc::new(RefCell::new(independent_text)), data)
             }?;
 
             Ok((
@@ -92,7 +92,7 @@ fn zip_choices_with_filter_values(
 
 /// Process a line into a string and return it with its tags.
 fn process_choice_text_and_tags(
-    choice_line: Rc<RefCell<InternalLine>>,
+    choice_line: Arc<RefCell<InternalLine>>,
     data: &FollowData,
 ) -> Result<(String, Vec<String>), InklingError> {
     let mut data_buffer = Vec::new();
