@@ -55,10 +55,13 @@ pub struct InternalChoice {
 
 impl PartialEq for InternalChoice {
     fn eq(self: &Self, rhs: &Self) -> bool {
-        let l = self.selection_text.clone();
-        let r = rhs.selection_text.clone();
+        let lvalue = {
+            let l = self.selection_text.clone();
+            let lvalue = (&*l.try_lock().unwrap()).clone();
+            lvalue
+        };
 
-        let lvalue = &*l.try_lock().unwrap();
+        let r = rhs.selection_text.clone();
         let rvalue = &*r.try_lock().unwrap();
 
         self.display_text == rhs.display_text &&
@@ -66,7 +69,7 @@ impl PartialEq for InternalChoice {
             self.is_sticky == rhs.is_sticky &&
             self.is_fallback == rhs.is_fallback &&
             self.meta_data == rhs.meta_data &&
-            *lvalue == *rvalue
+            lvalue == *rvalue
     }
 }
 
